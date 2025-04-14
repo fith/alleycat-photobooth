@@ -1,8 +1,8 @@
-65-bit raspy lite
+64-bit raspbian lite base image
 
 Set hostname: aaa-photo-#.local
 User: aaa
-pass: aaa
+pass: aaa #change this or don't connect to the whole ass internet, silly.
 Ssh on
 Enable wifi
 
