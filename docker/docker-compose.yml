@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  rfidreader:
+    build:
+      context: ..
+      dockerfile: docker/rfidreader/DOCKERFILE
+    privileged: true
+    volumes:
+      - /dev:/dev
+      - /sys:/sys
+    restart: unless-stopped

@@ -1,0 +1,43 @@
+65-bit raspy lite
+
+Set hostname: aaa-photo-#.local
+User: aaa
+pass: aaa
+Ssh on
+Enable wifi
+
+Install docker
+https://docs.docker.com/engine/install/debian/
+
+Enable docker permissions
+https://docs.docker.com/engine/install/linux-postinstall/
+
+Configure Docker to start on boot with systemd
+https://docs.docker.com/engine/install/linux-postinstall/
+
+
+install oh my posh for sexy shell
+curl -s https://ohmyposh.dev/install.sh | bash -s
+
+add PATH=$PATH:/home/aaa/.local/bin to $PATH in .bashrc
+```
+echo "# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi" >> .bashrc
+```
+
+install omp font
+```
+oh-my-posh font install meslo
+```
+
+add oh-my-posh init to the .bashrc
+```
+echo 'eval "$(oh-my-posh init bash --config ~/.cache/oh-my-posh/themes/cert.omp.json)"' >> .bashrc
+```
+
+make the startup script executable
+```
+chmod +x ./docker/startup.sh
+```
