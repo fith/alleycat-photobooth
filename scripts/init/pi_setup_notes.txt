@@ -1,0 +1,17 @@
+64-bit raspbian lite base image
+
+Set hostname: aaa-photo-#.local
+User: aaa
+pass: aaa #change this or don't connect to the whole ass internet, silly.
+Ssh on
+Enable wifi
+
+Install docker
+https://docs.docker.com/engine/install/debian/
+
+Enable docker permissions
+https://docs.docker.com/engine/install/linux-postinstall/
+
+Configure Docker to start on boot with systemd
+https://docs.docker.com/engine/install/linux-postinstall/
+

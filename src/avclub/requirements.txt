@@ -1,0 +1,6 @@
+flask==2.0.1
+flask-socketio==5.3.6
+python-engineio==4.9.1
+python-socketio==5.11.1
+pysmb==1.2.9
+ffmpeg-python==0.2.0 

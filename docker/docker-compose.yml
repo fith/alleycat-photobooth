@@ -1,12 +1,66 @@
-version: '3.8'
-
 services:
-  rfidreader:
+  gpio:
+    container_name: gpio
     build:
       context: ..
-      dockerfile: docker/rfidreader/DOCKERFILE
+      dockerfile: docker/gpio/DOCKERFILE
     privileged: true
+    env_file:
+      - .env
     volumes:
       - /dev:/dev
       - /sys:/sys
+      - photobooth_data:/data/
     restart: unless-stopped
+    networks:
+      - photobooth-network
+
+  avclub:
+    container_name: avclub
+    build:
+      context: ..
+      dockerfile: docker/avclub/DOCKERFILE
+    privileged: true
+    env_file:
+      - .env
+    devices:
+      - "/dev/video*:/dev/video*"
+      - "/dev/dri:/dev/dri"
+    volumes:
+      - photobooth_data:/data/
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    networks:
+      - photobooth-network
+
+  webpage:
+    container_name: webpage
+    build:
+      context: ..
+      dockerfile: docker/webpage/DOCKERFILE
+    privileged: true
+    env_file:
+      - .env
+    volumes:
+      - photobooth_data:/data/
+    ports:
+      - "80:8080"
+    restart: unless-stopped
+    depends_on:
+      - gpio
+      - avclub
+    networks:
+      - photobooth-network
+
+networks:
+  photobooth-network:
+    driver: bridge
+
+volumes:
+  photobooth_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/usbdata
+      o: bind

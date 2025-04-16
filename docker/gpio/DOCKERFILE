@@ -1,0 +1,23 @@
+FROM python:3.9-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    i2c-tools \
+    gcc \
+    python3-dev \
+    python3-setuptools \
+    python3-wheel \
+    build-essential
+
+# Set working directory
+WORKDIR /app
+
+# Copy application code
+COPY src/gpio/ .
+COPY src/common/ ./common/
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Run the application
+CMD ["python", "api.py"]
