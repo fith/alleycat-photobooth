@@ -15,3 +15,6 @@ https://docs.docker.com/engine/install/linux-postinstall/
 Configure Docker to start on boot with systemd
 https://docs.docker.com/engine/install/linux-postinstall/
 
+add 
+gpu_mem=256
+to /boot/firmware/config.txt

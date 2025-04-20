@@ -4,5 +4,6 @@
     "webcam_device": "/dev/video0",
     "webcam_rotation": 0,
     "webcam_resolution": "1280x720",
-    "video_duration": 5
+    "video_duration": 5,
+    "hostname": "aaa-photo-1.local"
 }

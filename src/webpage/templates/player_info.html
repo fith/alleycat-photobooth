@@ -4,114 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photobooth - Player Info</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1a1a;
-            color: #fff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #333;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        h1 {
-            color: #ff6b6b;
-            margin-top: 0;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        .player-id {
-            font-size: 1.2em;
-            color: #aaa;
-            margin-bottom: 30px;
-        }
-        .player-card {
-            background-color: #444;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: left;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        }
-        .player-details {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .detail-row {
-            display: flex;
-            border-bottom: 1px solid #555;
-            padding-bottom: 10px;
-        }
-        .detail-label {
-            flex: 0 0 120px;
-            font-weight: bold;
-            color: #ff6b6b;
-        }
-        .detail-value {
-            flex: 1;
-        }
-        .actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-        .action-button {
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1.1em;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .action-button:hover {
-            background-color: #ff8e8e;
-        }
-        .action-button:disabled {
-            background-color: #666;
-            cursor: not-allowed;
-        }
-        .status-message {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: rgba(0,0,0,0.2);
-        }
-        .status-message.success {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        .status-message.error {
-            color: #f44336;
-            font-weight: bold;
-        }
-        .loader {
-            border: 5px solid #333;
-            border-top: 5px solid #ff6b6b;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-            display: none;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
@@ -127,52 +20,45 @@
         
         {% if player %}
         <h1>{{ player.name }}</h1>
-        <div class="player-id">Player ID: {{ player.id }}</div>
         
         <div class="player-card">
             <div class="player-details">
                 <div class="detail-row">
-                    <div class="detail-label">Email:</div>
-                    <div class="detail-value">{{ player.email }}</div>
+                    <div class="detail-label">ID:</div>
+                    <div class="detail-value">{{ player.id }}</div>
                 </div>
                 
                 <div class="detail-row">
-                    <div class="detail-label">School:</div>
-                    <div class="detail-value">{{ player.school }}</div>
+                    <div class="detail-label">NeoID:</div>
+                    <div class="detail-value">{{ player.neoId }}</div>
                 </div>
                 
                 <div class="detail-row">
-                    <div class="detail-label">Team:</div>
-                    <div class="detail-value">{{ player.team }}</div>
-                </div>
-                
-                <div class="detail-row">
-                    <div class="detail-label">Status:</div>
+                    <div class="detail-label">Type:</div>
                     <div class="detail-value">
-                        {% if player.status == "active" %}
-                        <span style="color: #4caf50;">Active</span>
+                        {% if player.hunter %}
+                        <span style="color: var(--primary-color);">Hunter</span>
                         {% else %}
-                        <span style="color: #ff6b6b;">{{ player.status }}</span>
+                        <span style="color: var(--success-color);">Bounty</span>
                         {% endif %}
                     </div>
                 </div>
                 
-                {% if player.notes %}
                 <div class="detail-row">
-                    <div class="detail-label">Notes:</div>
-                    <div class="detail-value">{{ player.notes }}</div>
+                    <div class="detail-label">Allegiance:</div>
+                    <div class="detail-value">{{ player.allegiance }}</div>
                 </div>
-                {% endif %}
+                
+                <div class="detail-row">
+                    <div class="detail-label">Faction:</div>
+                    <div class="detail-value">{{ player.faction or 'None' }}</div>
+                </div>
             </div>
         </div>
         
         <div class="actions">
-            <button id="record-video" class="action-button">Record 5-Second Video</button>
-            <a href="/" class="action-button">Back to Home</a>
+            <a href="/record" class="btn">Record 5-Second Video</a>
         </div>
-        
-        <div id="status-message" class="status-message" style="display: none;"></div>
-        <div id="video-loader" class="loader" style="display: none;"></div>
         
         {% else %}
         <div class="not-found">
@@ -186,51 +72,12 @@
                 {% endfor %}
             </div>
             {% endif %}
-            
-            <div class="actions">
-                <a href="/" class="action-button">Back to Home</a>
-            </div>
         </div>
         {% endif %}
+        
+        <div class="nav-links">
+            <a href="/">Back to Main Menu</a>
+        </div>
     </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const recordButton = document.getElementById('record-video');
-            const statusMessage = document.getElementById('status-message');
-            const videoLoader = document.getElementById('video-loader');
-            
-            if (recordButton) {
-                recordButton.addEventListener('click', function() {
-                    recordButton.disabled = true;
-                    videoLoader.style.display = 'block';
-                    statusMessage.style.display = 'none';
-                    
-                    fetch('/api/webcam/video')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            showStatus('Video recording started', 'success');
-                        } else {
-                            showStatus('Error: ' + data.message, 'error');
-                        }
-                    })
-                    .catch(error => {
-                        showStatus('Error: ' + error.message, 'error');
-                    })
-                    .finally(() => {
-                        recordButton.disabled = false;
-                        videoLoader.style.display = 'none';
-                    });
-                });
-            }
-            
-            function showStatus(message, type) {
-                statusMessage.textContent = message;
-                statusMessage.className = 'status-message ' + type;
-                statusMessage.style.display = 'block';
-            }
-        });
-    </script>
 </body>
 </html> 

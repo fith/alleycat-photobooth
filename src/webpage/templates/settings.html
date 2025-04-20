@@ -4,90 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photobooth - Settings</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1a1a;
-            color: #fff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #333;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        h1 {
-            color: #ff6b6b;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-        .settings-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #444;
-            border-radius: 8px;
-        }
-        .settings-section h2 {
-            color: #ff6b6b;
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        input[type="text"],
-        input[type="number"],
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #666;
-            border-radius: 4px;
-            background-color: #333;
-            color: #fff;
-        }
-        .btn {
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-        }
-        .btn:hover {
-            background-color: #ff8e8e;
-        }
-        .nav-links {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .nav-links a {
-            color: #ff6b6b;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        .nav-links a:hover {
-            text-decoration: underline;
-        }
-        .messages {
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: rgba(0,0,0,0.2);
-        }
-        .messages p {
-            margin: 5px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
@@ -119,16 +36,12 @@
             <div class="settings-section">
                 <h2>Webcam Settings</h2>
                 <div class="form-group">
-                    <label for="webcam_device">Webcam Device:</label>
-                    <input type="text" id="webcam_device" name="webcam_device" value="{{ settings.webcam_device }}" required>
-                </div>
-                <div class="form-group">
                     <label for="webcam_rotation">Webcam Rotation:</label>
                     <select id="webcam_rotation" name="webcam_rotation">
-                        <option value="0" {% if settings.webcam_rotation == 0 %}selected{% endif %}>0 degrees</option>
-                        <option value="90" {% if settings.webcam_rotation == 90 %}selected{% endif %}>90 degrees</option>
-                        <option value="180" {% if settings.webcam_rotation == 180 %}selected{% endif %}>180 degrees</option>
-                        <option value="270" {% if settings.webcam_rotation == 270 %}selected{% endif %}>270 degrees</option>
+                        <option value="0" {% if settings.webcam_rotation|int == 0 %}selected{% endif %}>0 degrees</option>
+                        <option value="1" {% if settings.webcam_rotation|int == 1 %}selected{% endif %}>90 degrees</option>
+                        <option value="2" {% if settings.webcam_rotation|int == 2 %}selected{% endif %}>180 degrees</option>
+                        <option value="3" {% if settings.webcam_rotation|int == 3 %}selected{% endif %}>270 degrees</option>
                     </select>
                 </div>
             </div>
@@ -137,8 +50,7 @@
         </form>
         
         <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/webcam">Webcam</a>
+            <a href="/">Back to Main Menu</a>
         </div>
     </div>
 </body>

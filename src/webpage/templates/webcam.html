@@ -1,68 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photobooth - Webcam Preview</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #1a1a1a;
-            color: #fff;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #333;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        h1 {
-            color: #ff6b6b;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-        .preview-container {
-            position: relative;
-            margin-bottom: 20px;
-            background-color: #222;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .preview-image {
-            max-width: 100%;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .btn {
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 1.1em;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .btn:hover {
-            background-color: #ff8e8e;
-        }
-    </style>
+    <title>Webcam Preview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Webcam Preview</h1>
         
         <div class="preview-container">
-            <img class="preview-image" src="data:image/png;base64,{{ preview_image }}" alt="Webcam Preview">
+            <img id="preview" class="preview-image" src="/api/webcam/preview?t=0" alt="Webcam Preview">
+            <div id="error" class="error-message" style="display: none;"></div>
         </div>
         
-        <a href="/webcam" class="btn">Refresh Preview</a>
+        <div class="nav-links">
+            <a href="/">Back to Main Menu</a>
+        </div>
     </div>
+    
+    <script>
+        const preview = document.getElementById('preview');
+        const errorDiv = document.getElementById('error');
+        let errorCount = 0;
+        
+        function showError(message) {
+            errorDiv.textContent = `Error: ${message}\nAttempts: ${errorCount}`;
+            errorDiv.style.display = 'block';
+            console.error('Webcam error:', message);
+        }
+        
+        preview.onerror = function() {
+            errorCount++;
+            showError('Failed to load webcam feed');
+            // Try to reload with new timestamp
+            const timestamp = new Date().getTime();
+            preview.src = `/api/webcam/preview?t=${timestamp}`;
+        };
+    </script>
 </body>
 </html> 

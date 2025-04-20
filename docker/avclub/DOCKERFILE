@@ -3,7 +3,7 @@ FROM python:3.12-slim
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     ffmpeg 
-    
+
 # Copy application code
 COPY src/avclub/ .
 COPY src/common/ ./common/
@@ -12,4 +12,4 @@ COPY src/common/ ./common/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the application
-CMD ["python", "app.py"]
+CMD ["python", "api.py"]

@@ -24,7 +24,7 @@ services:
     env_file:
       - .env
     devices:
-      - "/dev/video*:/dev/video*"
+      - "/dev/video0:/dev/video0"
       - "/dev/dri:/dev/dri"
     volumes:
       - photobooth_data:/data/

@@ -9,31 +9,20 @@ import subprocess
 import sys
 import os
 import time
-from logit import log
+from common.logit import get_logger, log
+from common.settings import load_settings
 from lcd import set_lcd_text
+
+# Get logger
+logger = get_logger(__name__)
 
 # Create Flask application
 app = Flask(__name__)
 
-# Paths for scripts
-LCD_SCRIPT = os.path.join(os.path.dirname(__file__), "lcd.py")
-
-# Paths for data
-DATA_DIR = "/data"
-
-def get_container_ip_address():
-    """Get the IP address of the Docker container"""
-    try:
-        # Get the IP address of the container
-        ip_address = subprocess.check_output(['hostname', '-i']).decode('utf-8').strip()
-        
-        log(f"Container IP address: {ip_address}")
-        return ip_address
-    except Exception as e:
-        log(f"Error getting container IP address: {e}")
-        return None
-
-
+def get_hostname():
+    """Get the hostname from settings.json"""
+    settings = load_settings()
+    return settings['hostname']
 
 def run_command(cmd, timeout=None):
     """Run a command and return result"""
@@ -78,6 +67,6 @@ def update_lcd():
         return '', 500
 
 if __name__ == '__main__':
-    set_lcd_text("Started @", get_container_ip_address())
+    set_lcd_text("Started @", get_hostname())
     # Start the app
     app.run(host='0.0.0.0', port=5000, debug=False) 

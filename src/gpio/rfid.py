@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 RFID reader script for the Raspberry Pi.
-Reads RFID tags using the MFRC522 module and returns the UID.
+Reads NeoBand tags using the MFRC522 module and returns structured data.
 
 Usage:
     python rfid.py scan [timeout]
@@ -11,12 +11,14 @@ import sys
 import time
 import RPi.GPIO as GPIO
 from mfrc522 import MFRC522
-
-# Import from our custom logger module
-from .logger import log, DEBUG
+from common.logit import log, DEBUG
 
 # Define GPIO pins for MFRC522 connection
 RST_PIN = 22    # GPIO 22 (Pin 15)
+
+# NeoBand configuration
+NEOBAND_KEY_A = [0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5]  # Key A for reading
+AUTH_MODE = 0x60  # Authentication mode
 
 def init_rfid():
     """Initialize the RFID reader"""
@@ -51,15 +53,46 @@ def init_rfid():
         log(f"Error initializing RFID reader: {e}")
         return None
 
+def read_block(reader, sector, block):
+    """Read a block from the RFID tag"""
+    try:
+        # Authenticate with Key A
+        status = reader.MFRC522_Auth(reader.PICC_AUTHENT1A, block, NEOBAND_KEY_A, reader.uid)
+        if status != reader.MI_OK:
+            log(f"Authentication failed for sector {sector}, block {block}")
+            return None
+            
+        # Read the block
+        status, data = reader.MFRC522_Read(block)
+        if status != reader.MI_OK:
+            log(f"Failed to read sector {sector}, block {block}")
+            return None
+            
+        return data
+        
+    except Exception as e:
+        log(f"Error reading block: {e}")
+        return None
+
+def hex_to_text(hex_data):
+    """Convert hex data to text, removing null bytes and trailing garbage"""
+    try:
+        # Convert hex bytes to string, removing null bytes and trailing garbage
+        text = bytes(hex_data).decode('utf-8', errors='ignore').strip('\x00')
+        return text
+    except Exception as e:
+        log(f"Error converting hex to text: {e}")
+        return None
+
 def scan_rfid(reader, timeout=None):
-    """Scan for RFID tags
+    """Scan for RFID tags and read NeoBand data
     
     Args:
         reader: Initialized MFRC522 reader
         timeout: Maximum time to wait for a card in seconds (None = wait forever)
         
     Returns:
-        UID string or None if timeout or error
+        Dictionary with NeoBand data or None if timeout or error
     """
     if reader is None:
         log("RFID reader not initialized")
@@ -82,30 +115,50 @@ def scan_rfid(reader, timeout=None):
                 
                 if status == reader.MI_OK:
                     # Format the UID for display
-                    uid_str = '-'.join([f"{x:02x}" for x in uid])
+                    neo_id = '-'.join([f"{x:02x}" for x in uid])
                     log(f"Card detected! Type: {TagType}")
-                    log(f"Card UID: {uid_str}")
+                    log(f"Card UID: {neo_id}")
                     
                     # Select the card
                     reader.MFRC522_SelectTag(uid)
                     
+                    # Read role (Sector 1, Block 0)
+                    role_data = read_block(reader, 1, 0)
+                    role = hex_to_text(role_data) if role_data else None
+                    
+                    # Read name (Sector 39, Block 0)
+                    name_data = read_block(reader, 39, 0)
+                    name = hex_to_text(name_data) if name_data else None
+                    
+                    # Read allegiance (Sector 39, Block 1)
+                    allegiance_data = read_block(reader, 39, 1)
+                    allegiance = hex_to_text(allegiance_data) if allegiance_data else None
+                    
+                    # Determine faction based on sector
+                    faction = f"faction{uid[0] % 31 + 1}"  # Simple mapping based on UID
+                    
                     # Halt the card to release it
                     reader.MFRC522_StopCrypto1()
                     
-                    return uid_str
+                    # Return structured data
+                    return {
+                        "role": role,
+                        "name": name,
+                        "allegiance": allegiance,
+                        "neoId": neo_id,
+                        "faction": faction
+                    }
             
             # Short delay between scans
             time.sleep(0.1)
         
         # If we get here, we timed out
-        log("Timeout: No card detected")
+        # log("Timeout: No card detected")
         return None
         
     except Exception as e:
         log(f"Error scanning for RFID: {e}")
         return None
-
-        # Clean up is done by the caller
 
 def cleanup():
     """Clean up GPIO pins"""
@@ -132,14 +185,14 @@ def main():
             if timeout:
                 log(f"Timeout set to {timeout} seconds")
                 
-            uid = scan_rfid(reader, timeout)
+            data = scan_rfid(reader, timeout)
             
-            if uid:
-                log(f"RFID tag detected: {uid}")
+            if data:
+                log(f"NeoBand data: {data}")
                 sys.exit(0)
             else:
-                log("No RFID tag detected")
-                sys.exit(2)  # Exit code 2 for timeout
+                log("No RFID tag detected or error reading data")
+                sys.exit(2)  # Exit code 2 for timeout/error
                 
         finally:
             # Always clean up
