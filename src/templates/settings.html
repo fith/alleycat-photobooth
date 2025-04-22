@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settings - Alleycat Photobooth</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .nav {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #2196F3;
+        }
+        .settings-form {
+            margin: 20px 0;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1976D2;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+        }
+        .error {
+            background-color: #FFEBEE;
+            color: #C62828;
+        }
+    </style>
+</head>
+<body>
+    <h1>Settings</h1>
+    
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/settings">Settings</a>
+        <a href="/preview">Camera Preview</a>
+    </div>
+    
+    <div class="settings-form">
+        {% if message %}
+        <div class="message {{ message.type }}">
+            {{ message.text }}
+        </div>
+        {% endif %}
+        
+        <form method="POST" action="/settings">
+            <div class="form-group">
+                <label for="webcam_device">Webcam Device:</label>
+                <input type="text" id="webcam_device" name="webcam_device" value="{{ settings.webcam_device }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="webcam_resolution">Webcam Resolution:</label>
+                <input type="text" id="webcam_resolution" name="webcam_resolution" value="{{ settings.webcam_resolution }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="webcam_rotation">Webcam Rotation (degrees):</label>
+                <select id="webcam_rotation" name="webcam_rotation">
+                    <option value="0" {% if settings.webcam_rotation == 0 %}selected{% endif %}>0°</option>
+                    <option value="1" {% if settings.webcam_rotation == 1 %}selected{% endif %}>90°</option>
+                    <option value="2" {% if settings.webcam_rotation == 2 %}selected{% endif %}>180°</option>
+                    <option value="3" {% if settings.webcam_rotation == 3 %}selected{% endif %}>270°</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="video_duration">Video Duration (seconds):</label>
+                <input type="number" id="video_duration" name="video_duration" value="{{ settings.video_duration }}" min="1" max="60" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="video_framerate">Video Framerate:</label>
+                <input type="number" id="video_framerate" name="video_framerate" value="{{ settings.video_framerate }}" min="1" max="60" required>
+            </div>
+            
+            <button type="submit">Save Settings</button>
+        </form>
+    </div>
+</body>
+</html> 

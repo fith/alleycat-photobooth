@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Preview - Alleycat Photobooth</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .nav {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #2196F3;
+        }
+        .preview-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        #preview {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .error-message {
+            color: red;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid red;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Camera Preview</h1>
+    
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/settings">Settings</a>
+        <a href="/preview">Camera Preview</a>
+    </div>
+    
+    <div class="preview-container">
+        <img id="preview" src="/api/preview">
+        <div id="error" class="error-message"></div>
+    </div>
+    
+    <script>
+        const preview = document.getElementById('preview');
+        const errorDiv = document.getElementById('error');
+        
+        preview.onerror = function() {
+            errorDiv.textContent = 'Failed to load webcam feed. Please check your webcam connection and settings.';
+            errorDiv.style.display = 'block';
+        };
+    </script>
+</body>
+</html> 

@@ -1,0 +1,27 @@
+services:
+  mugshot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mugshot
+    privileged: true
+    devices:
+      - /dev/video0:/dev/video0
+      - /dev/dri:/dev/dri
+    volumes:
+      - /mnt/usbdata:/data
+      - /dev:/dev
+    environment:
+      - FLASK_APP=src/app.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - DEBUG=true
+    ports:
+      - "80:5000"
+    restart: unless-stopped
+    networks:
+      - alleycat-network
+
+networks:
+  alleycat-network:
+    driver: bridge 

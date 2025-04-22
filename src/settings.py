@@ -1,6 +1,6 @@
 import os
 import json
-from .logit import log
+from logit import log
 
 # Constants
 DATA_DIR = "/data"
